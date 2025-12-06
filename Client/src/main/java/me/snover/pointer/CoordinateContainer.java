@@ -100,13 +100,17 @@ public class CoordinateContainer implements ConfigurationSerializable {
      */
     @SuppressWarnings("JavadocDeclaration")
     private CoordinateSet getCoordinateSet(int id, int x, int y, int z, int x2, int y2, int z2) {
+        // Consider a better matching algorithm?
         for (CoordinateSet coordinateSet : COORDINATE_SET_LIST) {
             int idFromSet = coordinateSet.getID();
             int xFromSet = coordinateSet.getX();
             int yFromSet = coordinateSet.getY();
             int zFromSet = coordinateSet.getZ();
-
-            if (idFromSet == id && xFromSet == x && yFromSet == y && zFromSet == z) return coordinateSet;
+            int x2FromSet = coordinateSet.getX2();
+            int y2FromSet = coordinateSet.getY2();
+            int z2FromSet = coordinateSet.getZ2();
+            if (idFromSet == id && xFromSet == x && yFromSet == y && zFromSet == z
+            && x2FromSet == x2 && y2FromSet == y2 && z2FromSet == z2) return coordinateSet;
         }
 
         return null;
