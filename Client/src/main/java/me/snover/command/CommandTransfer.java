@@ -26,10 +26,11 @@ public class CommandTransfer extends Command {
 
     //Commonly used messages
     final Component USAGE = Component.text("Usage:\n/transfer register\n/transfer edit-mode\n/transfer listservers\n/transfer remserver\n/transfer showcoord\n/transfer remcoord\n/transfer test\n/transfer setspawn\n/transfer toggleforcedspawn", NamedTextColor.RED);
-    final Component REGISTER_USAGE = Component.text("Usage: /transfer register <server> (When executed in-game, takes the current location of the player. Server name is case sensitive!)\n" +
-            "/transfer register <server> p1|p2|commit (When executed in-game, defines a bounding box p1:p2 that will trigger the transfer. After defining both points, use commit. Server name is case sensitive!)\n" +
-            "/transfer register <server> x y z (trigger is player entering the specified location)\n" +
-            "/transfer register <server> x y z x2 y2 z2 (trigger is player entering the area defined by the bounding box)", NamedTextColor.RED);
+    final Component REGISTER_USAGE = Component.text("""
+            Usage: /transfer register <server> (When executed in-game, takes the current location of the player. Server name is case sensitive!)
+            /transfer register <server> p1|p2|commit (When executed in-game, defines a bounding box p1:p2 that will trigger the transfer. After defining both points, use commit. Server name is case sensitive!)
+            /transfer register <server> x y z (trigger is player entering the specified location)
+            /transfer register <server> x y z x2 y2 z2 (trigger is player entering the area defined by the bounding box)""", NamedTextColor.RED);
     final Component REMSERVER_USAGE = Component.text("Usage: /transfer remserver <server>", NamedTextColor.RED);
     final Component SHOWCOORD_USAGE = Component.text("Usage: /transfer showcoord <server>", NamedTextColor.RED);
     final Component REMCOORD_USAGE = Component.text("Usage: /transfer remcoord <server> <dimension> <x> <y> <z>", NamedTextColor.RED);
@@ -392,7 +393,11 @@ public class CommandTransfer extends Command {
         }
         String server = args[1];
         Player tgtPlayer = TransferClient.getPlugin().getServer().getPlayerExact(args[2]);
-        //May need to investigate warning of possible NullPointerException return.
+
+        if(tgtPlayer == null) {
+            sender.sendMessage(Component.text("Could not obtain player instance!", NamedTextColor.DARK_RED));
+            return false;
+        }
         if(!tgtPlayer.isOnline()) {
             sender.sendMessage(Component.text("Player is not online!", NamedTextColor.DARK_RED));
             return false;
