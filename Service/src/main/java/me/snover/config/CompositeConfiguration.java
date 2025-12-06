@@ -5,6 +5,7 @@ import me.snover.TransferService;
 
 import java.io.*;
 import java.net.JarURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,7 +45,7 @@ public class CompositeConfiguration {
                 if (!pluginDir.exists()) Files.createDirectories(Paths.get(pluginDir.getPath()));
 
                 //Begin TOML extraction
-                URL url = new URL("jar:file:" + WORKING_DIRECTORY + "/plugins/TransferService.jar!/secret.toml");
+                URL url = URI.create("jar:file:" + WORKING_DIRECTORY + "/plugins/TransferService.jar!/secret.toml").toURL();
                 JarURLConnection connection = (JarURLConnection) url.openConnection();
                 JarFile jarFile = connection.getJarFile();
                 JarEntry jarEntry = connection.getJarEntry();
