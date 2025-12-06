@@ -7,13 +7,13 @@ Plugin features:
 - Allows for a secret key to help prevent outside interference. This is not necessary if you are using Velocity's MODERN forwarding setting.
 - The `TransferService.jar` file will go in the plugin folder for your Velocity Proxy server while the `TransferClient.jar` file will go in the plugin folder of the Paper Minecraft server. A full list of commands is available by typing in `/transfer`.
 
-After setting up your servers and configuring your proxy in your `velocity.toml` file, you will then be able set up your "portals." The way portals work is that when a player walks onto a given location, it will automatically forward said player to the server that the portal is assigned to.
+After setting up your servers and configuring your proxy in your `velocity.toml` file, you will then be able set up your "portals." The way portals work is that when a player walks onto a given location or space, it will automatically forward said player to the server that the portal is assigned to.
 
 To register a set of coordinates to forward a player when they walk onto them, if you are logged into the server, you must first go into edit-mode using `/transfer edit-mode` to prevent you from teleporting while registering where new coordinate sets.
 
 ![Screenshot of transfer edit](https://i.imgur.com/UdDeaaa.png)
 
-Then you can use the `/transfer register` command to register the coordinates that you are currently standing on. You MUST use the name of the server that you used in the `velocity.toml` file. You also have the option of typing in the coordinates yourself. You may add the coordinates manually through the console if you wish.
+Then you can use the `/transfer register` command to register the coordinates of the point you are currently standing on or `/transfer register p1/p2/commit` to register a volume defined by locations `p1` and `p2` (the volume is registered with the `commit` argument). You MUST use the name of the server that you used in the `velocity.toml` file. You also have the option of typing in the coordinates yourself. You may add the coordinates manually through the console if you wish.
 ![Screenshot of transfer registration](https://i.imgur.com/OHEvqWm.png)
 
 And lastly, if you want players to spawn at the same spawn point every time they join the server, you can set that point by using two commands. `/transfer setspawn` to set the spawn point of where you are currently standing, and `/transfer toggleforcedspawn` to force players to spawn in the same spot every time.

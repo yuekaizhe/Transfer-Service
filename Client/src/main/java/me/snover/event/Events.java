@@ -6,6 +6,7 @@ import me.snover.messaging.PluginMessageSender;
 import me.snover.pointer.CoordinateContainer;
 import me.snover.pointer.CoordinateServerRegistry;
 import me.snover.pointer.CoordinateSet;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,6 +24,7 @@ public class Events implements Listener {
 
     private static final List<Player> playerLock = new ArrayList<>();
     private static final List<Player> editingPlayer = new ArrayList<>();
+    private static final HashMap<Player, Location[]> playerBoundingBoxState = new HashMap<>();
     Timer lockTimeoutTimer = new Timer();
 
     /**
@@ -115,5 +117,28 @@ public class Events implements Listener {
 
     public static boolean isPlayerEditing(Player player) {
         return editingPlayer.contains(player);
+    }
+
+    public static void playerEnterBoundingBoxP1(Player player, Location l) {
+        if(!playerBoundingBoxState.containsKey(player))
+            playerBoundingBoxState.put(player, new Location[2]);
+        playerBoundingBoxState.get(player)[0] = l;
+    }
+
+    public static void playerEnterBoundingBoxP2(Player player, Location l) {
+        if(!playerBoundingBoxState.containsKey(player))
+            playerBoundingBoxState.put(player, new Location[2]);
+        playerBoundingBoxState.get(player)[1] = l;
+    }
+
+    public static Location[] getBoundingBoxDefinitionForPlayer(Player player) {
+        if(playerBoundingBoxState.containsKey(player))
+            return playerBoundingBoxState.get(player);
+
+        return null;
+    }
+
+    public static void deletePlayerBoundingBoxState(Player player) {
+        playerBoundingBoxState.remove(player);
     }
 }

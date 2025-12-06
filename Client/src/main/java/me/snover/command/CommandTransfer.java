@@ -26,7 +26,10 @@ public class CommandTransfer extends Command {
 
     //Commonly used messages
     final Component USAGE = Component.text("Usage:\n/transfer register\n/transfer edit-mode\n/transfer listservers\n/transfer remserver\n/transfer showcoord\n/transfer remcoord\n/transfer test\n/transfer setspawn\n/transfer toggleforcedspawn", NamedTextColor.RED);
-    final Component REGISTER_USAGE = Component.text("Usage: /transfer register <server> <x> <y> <z> (Coordinates optional when used in-game. Server name is case sensitive!)", NamedTextColor.RED);
+    final Component REGISTER_USAGE = Component.text("Usage: /transfer register <server> (When executed in-game, takes the current location of the player. Server name is case sensitive!)\n" +
+            "/transfer register <server> p1|p2|commit (When executed in-game, defines a bounding box p1:p2 that will trigger the transfer. After defining both points, use commit. Server name is case sensitive!)\n" +
+            "/transfer register <server> x y z (trigger is player entering the specified location)\n" +
+            "/transfer register <server> x y z x2 y2 z2 (trigger is player entering the area defined by the bounding box)", NamedTextColor.RED);
     final Component REMSERVER_USAGE = Component.text("Usage: /transfer remserver <server>", NamedTextColor.RED);
     final Component SHOWCOORD_USAGE = Component.text("Usage: /transfer showcoord <server>", NamedTextColor.RED);
     final Component REMCOORD_USAGE = Component.text("Usage: /transfer remcoord <server> <dimension> <x> <y> <z>", NamedTextColor.RED);
@@ -110,6 +113,58 @@ public class CommandTransfer extends Command {
             }
         }
 
+        if (args.length == 3) {
+            if(sender instanceof Player player) {
+                if (!player.isOp() && !player.hasPermission("transferclient.transfer.register")) {
+                    player.sendMessage(DISALLOW);
+                    return false;
+                }
+
+                switch(args[2]){
+                    case "p1":
+                        Events.playerEnterBoundingBoxP1(player, player.getLocation());
+                        return true;
+                    case "p2":
+                        Events.playerEnterBoundingBoxP2(player, player.getLocation());
+                        return true;
+                    case "commit":
+                        var location = Events.getBoundingBoxDefinitionForPlayer(player);
+                        if (location == null) {
+                            sender.sendMessage(Component.text("No bounding box has been defined\n" + REGISTER_USAGE));
+                            return false;
+                        }
+
+                        if(location[0] == null)
+                            location[0] = location[1];
+                        if(location[1] == null)
+                            location[1] = location[0];
+
+                        CoordinateContainer container;
+                        if(CoordinateServerRegistry.exists(tgtServer)) {
+                            container = CoordinateServerRegistry.getContainer(tgtServer);
+                        } else container = new CoordinateContainer(tgtServer);
+
+                        // Normalize coordinates to simplify checking player's position
+                        container.addCoordinateSet(0,
+                                Math.min(location[0].getBlockX(), location[1].getBlockX()),
+                                Math.min(location[0].getBlockY(), location[1].getBlockY()),
+                                Math.min(location[0].getBlockZ(), location[1].getBlockZ()),
+                                Math.max(location[0].getBlockX(), location[1].getBlockX()),
+                                Math.max(location[0].getBlockY(), location[1].getBlockY()),
+                                Math.max(location[0].getBlockZ(), location[1].getBlockZ()));
+                        CoordinateServerRegistry.add(tgtServer, container);
+                        config.saveResources(false, true);
+                        Events.deletePlayerBoundingBoxState(player);
+
+                        return true;
+
+                    default:
+                        sender.sendMessage(REGISTER_USAGE);
+                        return false;
+                }
+            }
+        }
+
         //Begin registration process with given coordinates
         if (args.length == 5) {
             int x;
@@ -130,7 +185,39 @@ public class CommandTransfer extends Command {
                 container = CoordinateServerRegistry.getContainer(tgtServer);
             } else container = new CoordinateContainer(tgtServer);
 
-            container.addCoordinateSet(0, x, y, z);
+            container.addCoordinateSet(0, x, y, z, x, y, z);
+            CoordinateServerRegistry.add(tgtServer, container);
+            config.saveResources(false, true);
+            return true;
+        }
+
+        //Begin registration process with given coordinates for a bounding box
+        if (args.length == 8) {
+            int x, x2;
+            int y, y2;
+            int z, z2;
+
+            try {
+                x = Integer.parseInt(args[2]);
+                y = Integer.parseInt(args[3]);
+                z = Integer.parseInt(args[4]);
+                x2 = Integer.parseInt(args[5]);
+                y2 = Integer.parseInt(args[6]);
+                z2 = Integer.parseInt(args[7]);
+            } catch(NumberFormatException e) {
+                sender.sendMessage(Component.text("Coordinates must contain only whole numbers!\n" + REGISTER_USAGE, NamedTextColor.RED));
+                return false;
+            }
+
+            CoordinateContainer container;
+            if(CoordinateServerRegistry.exists(tgtServer)) {
+                container = CoordinateServerRegistry.getContainer(tgtServer);
+            } else container = new CoordinateContainer(tgtServer);
+
+            // Normalize coordinates to simplify checking player's position
+            container.addCoordinateSet(0,
+                    Math.min(x, x2), Math.min(y, y2), Math.min(z, z2),
+                    Math.max(x, x2), Math.max(y, y2), Math.max(z, z2));
             CoordinateServerRegistry.add(tgtServer, container);
             config.saveResources(false, true);
             return true;
@@ -245,6 +332,11 @@ public class CommandTransfer extends Command {
      * @return Returns {@code true} if command successful
      */
     private boolean executeRemCoord(CommandSender sender, String[] args) {
+        int x, x2;
+        int y, y2;
+        int z, z2;
+
+
         if(sender instanceof Player player) {
             if (!player.isOp() && !player.hasPermission("transferclient.transfer.remcoord")) {
                 player.sendMessage(DISALLOW);
@@ -275,7 +367,7 @@ public class CommandTransfer extends Command {
         if(args[2].contains("nether") || args[2].equals("-1")) id = -1;
         else if (args[2].contains("end") || args[2].equals("1")) id = 1;
         else id = 0;
-        CoordinateServerRegistry.getContainer(args[1]).removeCoordinateSet(id, Integer.parseInt(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[5]));
+        CoordinateServerRegistry.getContainer(args[1]).removeCoordinateSet(id, x, y, z, x2, y2, z2);
         config.saveResources(false, true);
         sender.sendMessage(Component.text("Removed coordinate set for server: " + args[1], NamedTextColor.AQUA));
         return true;
