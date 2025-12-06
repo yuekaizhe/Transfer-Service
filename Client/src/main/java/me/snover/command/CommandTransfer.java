@@ -359,16 +359,16 @@ public class CommandTransfer extends Command {
         x = Integer.parseInt(args[3]);
         y = Integer.parseInt(args[4]);
         z = Integer.parseInt(args[5]);
-        if(args.length != 9)
+        if(args.length == 9)
         {
-            x2 = x;
-            y2 = y;
-            z2 = z;
-        }
-        else {
             x2 = Integer.parseInt(args[6]);
             y2 = Integer.parseInt(args[7]);
             z2 = Integer.parseInt(args[8]);
+        }
+        else {
+            x2 = x;
+            y2 = y;
+            z2 = z;
         }
 
         int id;
