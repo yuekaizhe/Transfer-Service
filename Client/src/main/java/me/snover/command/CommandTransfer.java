@@ -27,8 +27,8 @@ public class CommandTransfer extends Command {
     //Commonly used messages
     final Component USAGE = Component.text("Usage:\n/transfer register\n/transfer edit-mode\n/transfer listservers\n/transfer remserver\n/transfer showcoord\n/transfer remcoord\n/transfer test\n/transfer setspawn\n/transfer toggleforcedspawn", NamedTextColor.RED);
     final Component REGISTER_USAGE = Component.text("""
-            Usage: /transfer register <server> (When executed in-game, takes the current location of the player. Server name is case sensitive!)
-            /transfer register <server> p1|p2|commit (When executed in-game, defines a bounding box p1:p2 that will trigger the transfer. After defining both points, use commit. Server name is case sensitive!)
+            Usage: /transfer register <server> (When executed in-game, takes the current location of the player)
+            /transfer register <server> p1|p2|commit (When executed in-game, defines a bounding box p1:p2 that will trigger the transfer. After defining both points, use commit)
             /transfer register <server> x y z (trigger is player entering the specified location)
             /transfer register <server> x y z x2 y2 z2 (trigger is player entering the area defined by the bounding box)""", NamedTextColor.RED);
     final Component REMSERVER_USAGE = Component.text("Usage: /transfer remserver <server>", NamedTextColor.RED);
@@ -36,7 +36,7 @@ public class CommandTransfer extends Command {
     final Component REMCOORD_USAGE = Component.text("Usage: /transfer remcoord <server> <dimension> <x> <y> <z>", NamedTextColor.RED);
     final Component TEST_USAGE = Component.text("Usage: /transfer test <server> <player>", NamedTextColor.RED);
     final Component SET_SPAWN_USAGE = Component.text("Usage: /transfer setspawn <x> <y> <z> (coordinates optional when used in-game)", NamedTextColor.RED);
-    final Component SERVER_NOT_FOUND = Component.text("Server not found in registry!", NamedTextColor.RED);
+    final Component SERVER_NOT_FOUND = Component.text("Server not found in registry! Server name is case-sensitive!", NamedTextColor.RED);
     final Component DISALLOW = Component.text("Not Allowed!", NamedTextColor.RED);
 
     @SuppressWarnings({"FieldMayBeFinal", "CanBeFinal"})
