@@ -145,14 +145,21 @@ public class CommandTransfer extends Command {
                             container = CoordinateServerRegistry.getContainer(tgtServer);
                         } else container = new CoordinateContainer(tgtServer);
 
+                        int blockXa = location[0].getBlockX();
+                        int blockXb = location[1].getBlockX();
+                        int blockYa = location[0].getBlockY();
+                        int blockYb = location[1].getBlockY();
+                        int blockZa = location[0].getBlockZ();
+                        int blockZb = location[1].getBlockZ();
+
                         // Normalize coordinates to simplify checking player's position
                         container.addCoordinateSet(0,
-                                Math.min(location[0].getBlockX(), location[1].getBlockX()),
-                                Math.min(location[0].getBlockY(), location[1].getBlockY()),
-                                Math.min(location[0].getBlockZ(), location[1].getBlockZ()),
-                                Math.max(location[0].getBlockX(), location[1].getBlockX()),
-                                Math.max(location[0].getBlockY(), location[1].getBlockY()),
-                                Math.max(location[0].getBlockZ(), location[1].getBlockZ()));
+                                Math.min(blockXa, blockXb),
+                                Math.min(blockYa, blockYb),
+                                Math.min(blockZa, blockZb),
+                                Math.max(blockXa, blockXb),
+                                Math.max(blockYa, blockYb),
+                                Math.max(blockZa, blockZb));
                         CoordinateServerRegistry.add(tgtServer, container);
                         config.saveResources(false, true);
                         Events.deletePlayerBoundingBoxState(player);
