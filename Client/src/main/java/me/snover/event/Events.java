@@ -54,7 +54,9 @@ public class Events implements Listener {
             CoordinateSet[] set = container.getCoordinateSets();
             for (CoordinateSet coordinateSet : set) {
 
-                if (playerDimId == coordinateSet.getID() && playerX == coordinateSet.getX() && playerY == coordinateSet.getY() && playerZ == coordinateSet.getZ()) {
+                if (playerDimId == coordinateSet.getID() && (playerX >= coordinateSet.getX() && playerX <= coordinateSet.getX2())
+                        && (playerY >= coordinateSet.getY() && playerY <= coordinateSet.getY2())
+                        && (playerZ >= coordinateSet.getZ() && playerZ <= coordinateSet.getZ2()) ) {
                     playerLock.add(player);
                     lockTimeoutTimer.schedule(new TimerTask() {
                         @Override

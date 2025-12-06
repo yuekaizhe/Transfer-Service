@@ -103,7 +103,7 @@ public class CommandTransfer extends Command {
                 int y = player.getLocation().getBlockY();
                 int z = player.getLocation().getBlockZ();
                 sender.sendMessage(Component.text("Registering a new coordinate set:" + "\nx: " + x + "\ny: " + y + "\nz: " + z, NamedTextColor.AQUA));
-                container.addCoordinateSet(id, x, y, z);
+                container.addCoordinateSet(id, x, y, z, x, y, z);
                 CoordinateServerRegistry.add(tgtServer, container);
                 config.saveResources(false, true);
                 return true;
@@ -255,6 +255,22 @@ public class CommandTransfer extends Command {
             sender.sendMessage(REMCOORD_USAGE);
             return false;
         }
+
+        x = Integer.parseInt(args[3]);
+        y = Integer.parseInt(args[4]);
+        z = Integer.parseInt(args[5]);
+        if(args.length != 9)
+        {
+            x2 = x;
+            y2 = y;
+            z2 = z;
+        }
+        else {
+            x2 = Integer.parseInt(args[6]);
+            y2 = Integer.parseInt(args[7]);
+            z2 = Integer.parseInt(args[8]);
+        }
+
         int id;
         if(args[2].contains("nether") || args[2].equals("-1")) id = -1;
         else if (args[2].contains("end") || args[2].equals("1")) id = 1;
